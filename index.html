@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Web Projects Gallery - 150 Tools</title>
+    <style>
+        :root {
+            --primary-color: #2196f3;
+            --secondary-color: #ff4081;
+            --accent-color: #4caf50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            perspective: 1000px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            transform-style: preserve-3d;
+            transform: translateZ(50px);
+            color: var(--primary-color);
+            text-shadow: 0 0 15px rgba(33, 150, 243, 0.7);
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+            transform: translateZ(30px);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            transform-style: preserve-3d;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.8rem;
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            position: relative;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .project-card:hover {
+            transform: translateZ(30px) rotateX(5deg) rotateY(5deg) scale(1.03);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(33, 150, 243, 0.4);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            border: 2px solid var(--primary-color);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-card:hover::before {
+            opacity: 0.3;
+        }
+
+        .project-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+            pointer-events: none;
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+
+        .project-card:hover::after {
+            opacity: 0.5;
+            transform: rotate(45deg) translate(0, 50%);
+        }
+
+        .project-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .project-id {
+            font-size: 0.9rem;
+            opacity: 0.6;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            align-self: flex-start;
+            position: relative;
+            z-index: 2;
+            text-transform: capitalize;
+        }
+
+        .category-filter {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary-color);
+            transform: translateZ(10px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-input {
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            width: 100%;
+            max-width: 500px;
+            font-size: 1rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+            transform: translateZ(10px);
+        }
+
+        .no-results {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 2rem;
+            opacity: 0.7;
+            transform: translateZ(30px);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateZ(50px); }
+            50% { transform: translateY(-20px) translateZ(30px); }
+        }
+
+        .hero {
+            text-align: center;
+            padding: 5rem 0 3rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Category-specific colors */
+        .category-basic { color: #2196f3; }
+        .category-form { color: #ff4081; }
+        .category-color { color: #4caf50; }
+        .category-media { color: #ff9800; }
+        .category-dev { color: #9c27b0; }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            .projects-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>150 Web Projects Gallery</h1>
+        <p class="subtitle">Interactive 3D showcase of frontend tools and utilities</p>
+    </div>
+
+    <div class="container">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search projects..." id="searchInput">
+        </div>
+
+        <div class="category-filter">
+            <button class="filter-btn active" data-category="all">All Projects</button>
+            <button class="filter-btn" data-category="basic">Basic Tools</button>
+            <button class="filter-btn" data-category="form">Form & Text</button>
+            <button class="filter-btn" data-category="color">Color & Style</button>
+            <button class="filter-btn" data-category="media">Image & Media</button>
+            <button class="filter-btn" data-category="dev">Dev Tools</button>
+        </div>
+
+        <div class="projects-grid" id="projectsContainer"></div>
+    </div>
+
+    <script>
+        // All 150 projects data
+        const projects = [
+            // Basic Tools (1-30)
+            {id: 1, name: 'Calculator', category: 'basic'},
+            {id: 2, name: 'BMI Calculator', category: 'basic'},
+            {id: 3, name: 'Stopwatch', category: 'basic'},
+            {id: 4, name: 'Countdown Timer', category: 'basic'},
+            {id: 5, name: 'Tip Calculator', category: 'basic'},
+            {id: 6, name: 'Currency Converter', category: 'basic'},
+            {id: 7, name: 'Age Calculator', category: 'basic'},
+            {id: 8, name: 'Loan Calculator', category: 'basic'},
+            {id: 9, name: 'Digital Clock', category: 'basic'},
+            {id: 10, name: 'Pomodoro Timer', category: 'basic'},
+            {id: 11, name: 'Temperature Converter', category: 'basic'},
+            {id: 12, name: 'Unit Converter', category: 'basic'},
+            {id: 13, name: 'Leap Year Checker', category: 'basic'},
+            {id: 14, name: 'Word Counter', category: 'basic'},
+            {id: 15, name: 'Character Counter', category: 'basic'},
+            {id: 16, name: 'Text Case Converter', category: 'basic'},
+            {id: 17, name: 'Palindrome Checker', category: 'basic'},
+            {id: 18, name: 'Password Strength Checker', category: 'basic'},
+            {id: 19, name: 'Random Number Generator', category: 'basic'},
+            {id: 20, name: 'Random Password Generator', category: 'basic'},
+            {id: 21, name: 'Dice Roller', category: 'basic'},
+            {id: 22, name: 'Flip Coin', category: 'basic'},
+            {id: 23, name: 'QR Code Generator', category: 'basic'},
+            {id: 24, name: 'QR Code Scanner', category: 'basic'},
+            {id: 25, name: 'Barcode Generator', category: 'basic'},
+            {id: 26, name: 'Day of the Week Finder', category: 'basic'},
+            {id: 27, name: 'Discount Calculator', category: 'basic'},
+            {id: 28, name: 'Grade Calculator', category: 'basic'},
+            {id: 29, name: 'Love Calculator', category: 'basic'},
+            {id: 30, name: 'Even or Odd Checker', category: 'basic'},
+
+            // Form & Text Tools (31-60)
+            {id: 31, name: 'Contact Form Validator', category: 'form'},
+            {id: 32, name: 'Email Validator', category: 'form'},
+            {id: 33, name: 'JSON Formatter', category: 'form'},
+            {id: 34, name: 'XML Formatter', category: 'form'},
+            {id: 35, name: 'Text Encryptor/Decryptor', category: 'form'},
+            {id: 36, name: 'Caesar Cipher Tool', category: 'form'},
+            {id: 37, name: 'Morse Code Translator', category: 'form'},
+            {id: 38, name: 'Base64 Encoder/Decoder', category: 'form'},
+            {id: 39, name: 'Markdown Previewer', category: 'form'},
+            {id: 40, name: 'Resume Builder', category: 'form'},
+            {id: 41, name: 'Note Taking App', category: 'form'},
+            {id: 42, name: 'Notepad (with local storage)', category: 'form'},
+            {id: 43, name: 'Word Scrambler', category: 'form'},
+            {id: 44, name: 'Typing Speed Tester', category: 'form'},
+            {id: 45, name: 'Essay Word Limit Checker', category: 'form'},
+            {id: 46, name: 'HTML Escape Tool', category: 'form'},
+            {id: 47, name: 'CSS Minifier', category: 'form'},
+            {id: 48, name: 'JavaScript Minifier', category: 'form'},
+            {id: 49, name: 'Regex Tester', category: 'form'},
+            {id: 50, name: 'Text-to-Slug Generator', category: 'form'},
+            {id: 51, name: 'Uppercase/Lowercase Toggle', category: 'form'},
+            {id: 52, name: 'Sentence Case Converter', category: 'form'},
+            {id: 53, name: 'Lorem Ipsum Generator', category: 'form'},
+            {id: 54, name: 'Blog Post Formatter', category: 'form'},
+            {id: 55, name: 'Email Template Builder', category: 'form'},
+            {id: 56, name: 'Feedback Form', category: 'form'},
+            {id: 57, name: 'Text Aligner Tool', category: 'form'},
+            {id: 58, name: 'Font Preview Tool', category: 'form'},
+            {id: 59, name: 'Text to Speech Tool', category: 'form'},
+            {id: 60, name: 'Online Resume Previewer', category: 'form'},
+
+            // Color & Style Tools (61-90)
+            {id: 61, name: 'Color Picker', category: 'color'},
+            {id: 62, name: 'Hex to RGB Converter', category: 'color'},
+            {id: 63, name: 'RGB to Hex Converter', category: 'color'},
+            {id: 64, name: 'Gradient Generator', category: 'color'},
+            {id: 65, name: 'Box Shadow Generator', category: 'color'},
+            {id: 66, name: 'Text Shadow Generator', category: 'color'},
+            {id: 67, name: 'Border Radius Previewer', category: 'color'},
+            {id: 68, name: 'CSS Clip-path Generator', category: 'color'},
+            {id: 69, name: 'Color Palette Generator', category: 'color'},
+            {id: 70, name: 'Material Design Color Picker', category: 'color'},
+            {id: 71, name: 'Tailwind Color Generator', category: 'color'},
+            {id: 72, name: 'Flat UI Color Picker', category: 'color'},
+            {id: 73, name: 'Transparent Background Checker', category: 'color'},
+            {id: 74, name: 'Image to CSS Filter Tool', category: 'color'},
+            {id: 75, name: 'CSS Animation Preview Tool', category: 'color'},
+            {id: 76, name: 'Font Pairing Tool', category: 'color'},
+            {id: 77, name: 'CSS Grid Generator', category: 'color'},
+            {id: 78, name: 'Flexbox Playground', category: 'color'},
+            {id: 79, name: 'CSS Button Generator', category: 'color'},
+            {id: 80, name: 'HTML Email Signature Generator', category: 'color'},
+            {id: 81, name: 'Image Overlay Maker', category: 'color'},
+            {id: 82, name: 'Neumorphism Generator', category: 'color'},
+            {id: 83, name: 'Glassmorphism Generator', category: 'color'},
+            {id: 84, name: 'CSS Background Pattern Generator', category: 'color'},
+            {id: 85, name: 'Opacity Checker Tool', category: 'color'},
+            {id: 86, name: 'Emoji Picker', category: 'color'},
+            {id: 87, name: 'CSS Gradient Animation', category: 'color'},
+            {id: 88, name: 'Responsive Breakpoint Tester', category: 'color'},
+            {id: 89, name: 'Theme Switcher (Light/Dark)', category: 'color'},
+            {id: 90, name: 'Custom Scrollbar Generator', category: 'color'},
+
+            // Image & Media Tools (91-120)
+            {id: 91, name: 'Image Compressor', category: 'media'},
+            {id: 92, name: 'Image Resizer', category: 'media'},
+            {id: 93, name: 'Image Cropper', category: 'media'},
+            {id: 94, name: 'Image Filter Editor', category: 'media'},
+            {id: 95, name: 'Image Rotator', category: 'media'},
+            {id: 96, name: 'Meme Generator', category: 'media'},
+            {id: 97, name: 'Collage Maker', category: 'media'},
+            {id: 98, name: 'Image to Base64 Converter', category: 'media'},
+            {id: 99, name: 'Base64 to Image Viewer', category: 'media'},
+            {id: 100, name: 'Webcam Photo Capture', category: 'media'},
+            {id: 101, name: 'Webcam Filters', category: 'media'},
+            {id: 102, name: 'Audio Player', category: 'media'},
+            {id: 103, name: 'Video Player', category: 'media'},
+            {id: 104, name: 'Video Trimmer', category: 'media'},
+            {id: 105, name: 'Music Visualizer', category: 'media'},
+            {id: 106, name: 'MP3 Tag Viewer', category: 'media'},
+            {id: 107, name: 'Image Slider Builder', category: 'media'},
+            {id: 108, name: 'Photo Gallery Viewer', category: 'media'},
+            {id: 109, name: 'Image Comparison Slider', category: 'media'},
+            {id: 110, name: 'Drag & Drop Uploader', category: 'media'},
+            {id: 111, name: 'EXIF Viewer', category: 'media'},
+            {id: 112, name: 'Icon Search Tool', category: 'media'},
+            {id: 113, name: 'Favicon Generator', category: 'media'},
+            {id: 114, name: 'Background Remover UI', category: 'media'},
+            {id: 115, name: 'YouTube Video Embed Tool', category: 'media'},
+            {id: 116, name: 'Video to GIF UI', category: 'media'},
+            {id: 117, name: 'GIF Previewer', category: 'media'},
+            {id: 118, name: 'HTML5 Canvas Drawing App', category: 'media'},
+            {id: 119, name: 'Canvas Signature Pad', category: 'media'},
+            {id: 120, name: 'Screen Recorder UI', category: 'media'},
+
+            // Dev Tools & UI Generators (121-150)
+            {id: 121, name: 'HTML Boilerplate Generator', category: 'dev'},
+            {id: 122, name: 'CSS Boilerplate Generator', category: 'dev'},
+            {id: 123, name: 'JSON Viewer', category: 'dev'},
+            {id: 124, name: 'REST API Tester UI', category: 'dev'},
+            {id: 125, name: 'File Downloader', category: 'dev'},
+            {id: 126, name: 'LocalStorage Manager', category: 'dev'},
+            {id: 127, name: 'Cookie Viewer', category: 'dev'},
+            {id: 128, name: 'Code Syntax Highlighter', category: 'dev'},
+            {id: 129, name: 'Web Font Loader', category: 'dev'},
+            {id: 130, name: 'Responsive Design Checker', category: 'dev'},
+            {id: 131, name: 'Page Speed Test UI', category: 'dev'},
+            {id: 132, name: 'Meta Tag Generator', category: 'dev'},
+            {id: 133, name: 'Sitemap Generator UI', category: 'dev'},
+            {id: 134, name: 'Robots.txt Generator', category: 'dev'},
+            {id: 135, name: 'Schema Markup Generator', category: 'dev'},
+            {id: 136, name: 'SEO Checklist UI', category: 'dev'},
+            {id: 137, name: 'Link Shortener UI', category: 'dev'},
+            {id: 138, name: 'Online IDE (HTML/CSS/JS)', category: 'dev'},
+            {id: 139, name: 'Drag and Drop Builder', category: 'dev'},
+            {id: 140, name: 'Portfolio Generator', category: 'dev'},
+            {id: 141, name: 'Static Blog Generator', category: 'dev'},
+            {id: 142, name: 'Web Manifest Generator', category: 'dev'},
+            {id: 143, name: 'Progressive Web App Tester', category: 'dev'},
+            {id: 144, name: 'CDN Links Generator', category: 'dev'},
+            {id: 145, name: 'JS Library Picker', category: 'dev'},
+            {id: 146, name: 'Favicon Previewer', category: 'dev'},
+            {id: 147, name: 'App Icon Generator', category: 'dev'},
+            {id: 148, name: 'CSS Validator UI', category: 'dev'},
+            {id: 149, name: 'Website Screenshot UI', category: 'dev'},
+            {id: 150, name: 'HTML Email Tester', category: 'dev'}
+        ];
+
+        // DOM elements
+        const projectsContainer = document.getElementById('projectsContainer');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('searchInput');
+
+        // Initialize the page
+        function init() {
+            renderProjects(projects);
+            setupEventListeners();
+        }
+
+        // Render projects to the DOM
+        function renderProjects(projectsToRender) {
+            projectsContainer.innerHTML = '';
+            
+            if (projectsToRender.length === 0) {
+                projectsContainer.innerHTML = '<div class="no-results">No projects found matching your search.</div>';
+                return;
+            }
+
+            projectsToRender.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.dataset.category = project.category;
+                card.dataset.id = project.id;
+                card.innerHTML = `
+                    <span class="project-id">#${project.id}</span>
+                    <h3>${project.name}</h3>
+                    <span class="category-tag category-${project.category}">${project.category}</span>
+                `;
+                projectsContainer.appendChild(card);
+            });
+        }
+
+        // Filter projects by category
+        function filterProjects(category) {
+            if (category === 'all') {
+                renderProjects(projects);
+                return;
+            }
+            
+            const filteredProjects = projects.filter(project => project.category === category);
+            renderProjects(filteredProjects);
+        }
+
+        // Search projects by name
+        function searchProjects(query) {
+            const normalizedQuery = query.toLowerCase().trim();
+            
+            if (!normalizedQuery) {
+                const activeFilter = document.querySelector('.filter-btn.active');
+                if (activeFilter && activeFilter.dataset.category !== 'all') {
+                    filterProjects(activeFilter.dataset.category);
+                } else {
+                    renderProjects(projects);
+                }
+                return;
+            }
+            
+            const results = projects.filter(project => 
+                project.name.toLowerCase().includes(normalizedQuery) ||
+                project.id.toString().includes(normalizedQuery)
+            );
+            
+            renderProjects(results);
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Filter buttons
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    filterProjects(button.dataset.category);
+                });
+            });
+
+            // Search input
+            searchInput.addEventListener('input', (e) => {
+                searchProjects(e.target.value);
+            });
+
+            // Project card hover effects
+            document.addEventListener('mousemove', (e) => {
+                const cards = document.querySelectorAll('.project-card');
+                cards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
